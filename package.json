@@ -6,7 +6,7 @@
   "author": "Stefan Tanurkov",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --port 8888",
+    "start": "webpack-dev-server --port 8181",
     "build": "webpack --config webpack.config.prod.js",
     "electron": "electron .",
     "electrontest": "webpack-dev-server --port 8999",

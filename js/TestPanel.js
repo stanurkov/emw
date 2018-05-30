@@ -16,8 +16,14 @@ export default class TestPanel extends Component {
                 height: 200,
                 x: screen.width - 350,
                 y: 50,
+                autoHideMenuBar: true,
+                webPreferences: {
+                    additionalArguments: 
+                        "add-argyments",
+                    
+                }
             },
-            location: "https://ya.ru",
+            location: "file:///c|/usr/simple.html",
         }
         core.ipc.send("requestNewWindow", data);
     }

@@ -14,7 +14,7 @@ const BrowserWindow = electron.BrowserWindow;
 const createWindow = () => {
     mainWindow = new BrowserWindow({width: 1500, height: 900})
 
-    mainWindow.loadURL("http://localhost:8888")
+    mainWindow.loadURL("http://localhost:8181")
 
     mainWindow.webContents.toggleDevTools();
 
@@ -57,6 +57,11 @@ ipcMain.on("requestNewWindow", (event, data) => {
     newWindow.loadURL(data.location);
 } );
 
+ipcMain.on("testCmd", (event, data) => {
+    console.log("TEST COMMAND: ", data);
+} );
+
+
 
 
 expApp.get("/test", (req, res) => {
@@ -77,7 +82,7 @@ expApp.get('/user/:id', function (req, res, next) {
   
 
 
-expApp.listen(3030);
+expApp.listen(3031);
 
 app.on('ready', createWindow);
 

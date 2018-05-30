@@ -31,7 +31,7 @@ module.exports = {
         proxy: {
             // proxy all requests starting with /api to jsonplaceholder
             '/api/**': {
-                target: 'http://localhost:3030/',
+                target: 'http://localhost:3031/',
                 secure: false,
                 changeOrigin: true
             }
