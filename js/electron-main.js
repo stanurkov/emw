@@ -63,6 +63,19 @@ expApp.get("/test", (req, res) => {
     res.send('Express is open');
 })
 
+expApp.param('id', function (req, res, next, id) {
+    console.log('CALLED ONLY ONCE');
+    res.send("Your user id is " + id);
+    res.end();
+});
+  
+expApp.get('/user/:id', function (req, res, next) {
+    console.log('although this matches');
+    next();
+    
+});
+  
+
 
 expApp.listen(3030);
 
