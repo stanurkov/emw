@@ -2,12 +2,33 @@
 import React, {Component} from 'react';
 import FlexBand, { FlexBandItem } from 'flexband'
 import ln3 from 'ln3';
+import { createMuiTheme } from '@material-ui/core/styles';
+import blue from '@material-ui/core/colors/blue';
+import { MuiThemeProvider, Typography, } from '@material-ui/core';
 
 // local imports
 
 import core from "./system/core";
- 
+import TestPanel from './TestPanel';
+
 require("../fonts/roboto.css");   
+
+const theme = createMuiTheme({
+    palette: {
+    },
+    typography: {
+        // Use the system font instead of the default Roboto font.
+        fontFamily: [
+            'Roboto',
+            '-apple-system',
+            'BlinkMacSystemFont',
+          '"Segoe UI"',
+        ],
+
+        fontSize: 14,
+
+    },
+});
 
 
 class Main extends Component {
@@ -79,9 +100,12 @@ class Main extends Component {
     render() {
         
         return (
-		<div>
-                   { ln3.text("hello.text", "Hello from Electron JS!") }
-                </div>
+            <MuiThemeProvider theme={theme}>
+                <Typography variant="headline">
+                    { ln3.text("hello.text", "Hello from Electron JS!") }                
+                </Typography>
+                <TestPanel />
+            </MuiThemeProvider>
         );
     }
 }
