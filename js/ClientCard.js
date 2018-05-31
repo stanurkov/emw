@@ -6,6 +6,7 @@ import FlexBand, { FlexBandItem } from 'flexband';
 
 const maxLogLength = 15;
 
+let nextEventId = 1;
 
 const bkColors = [
     green[100],
@@ -41,10 +42,10 @@ export default class ClientCard extends Component {
 
     handleClientUpdate = (event, data) => {
         if (data && data.clientId === this.props.client) {
-            console.log("Client ", data.clientId, " updated: ", data);
 
             const log = this.state.log;
 
+            data.eventId = nextEventId ++;
             log.push(data);
 
             if (log.length > maxLogLength) {
@@ -93,7 +94,7 @@ export default class ClientCard extends Component {
                 </FlexBand>
                 {
                     this.state.log.map( e => (
-                        <Typography key={e.time + e.event} variant="body1">
+                        <Typography key={e.eventId} variant="body1">
                             { (new Date(e.time)).toLocaleTimeString() + " : " + e.event }
                         </Typography>
                     ) )
