@@ -2,8 +2,44 @@ import React, {Component} from 'react';
 import FlexBand, { FlexBandItem } from 'flexband'
 import ln3 from 'ln3';
 import { Button, Paper, } from '@material-ui/core';
-
+import { Base64 } from 'js-base64';
 import core from './system/core';
+
+let nextWindowId = 1; 
+
+const windowIdBase = Math.round(1000 * Math.random()) + '.' + ( (new Date()).getTime() ) + '.';
+
+const popWindows = [];
+
+const macroId = "{{ID}}";
+const macroDir = "{{DIR}}";
+
+const baseTemplate = 
+`
+<head>
+<script src="${macroDir}/test.js"></script>
+</head>
+<body>
+<div id="app" />
+<script>
+var clientId = "${macroId}";
+console.log("client ID:", clientId);
+    var e = document.getElementById("app");
+    if (e) {
+        e.appendChild(document.createTextNode("Hi! My ID is " + clientId));
+    }
+</script>
+</body>`;
+
+
+const uriFor = (id) => {
+
+    let s = baseTemplate;
+    s = s.replace(macroId, id).replace(macroDir, core.scriptBase);
+
+    return "data:text/html;base64," + Base64.encode(s);
+}
+
 
 export default class TestPanel extends Component {
 
@@ -13,17 +49,16 @@ export default class TestPanel extends Component {
         const data = {
             window: {
                 width: 300,
-                height: 200,
+                height: 400,
                 x: screen.width - 350,
                 y: 50,
-                autoHideMenuBar: true,
+                // autoHideMenuBar: true,
+                // frame: false,
                 webPreferences: {
-                    additionalArguments: 
-                        "add-argyments",
-                    
+                    webSecurity: false,
                 }
             },
-            location: "file:///c|/usr/simple.html",
+            location: uriFor(windowIdBase + (nextWindowId ++)),
         }
         core.ipc.send("requestNewWindow", data);
     }
@@ -32,8 +67,8 @@ export default class TestPanel extends Component {
 
 
         return (
-            <div className="margin16 layout-min-fill" >
-            <Paper className="padding16 layout-min-fill" >
+            <div className="padding16 layout-min-fill" >
+            <Paper className="layout-fill" >
                 <div className="padding16 layout-min-fill" >
                 <Button variant="raised" onClick={this.handleClick} >
                     Create a test window

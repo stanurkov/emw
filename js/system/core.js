@@ -25,6 +25,14 @@ class Core extends ObservedObject {
         try {
             this.ipc = ipcRenderer;
 
+            ipcRenderer.on("baseDir", (event, data) => {
+                this.baseDir = data.baseDir;
+                this.scriptBase = data.scriptBase;
+                console.log("Got baseDir data: ", data);
+            });
+
+            ipcRenderer.send("getBaseDir");
+
             if (this.onStartCreate) this.onStartCreate();
 
             this.axios = axios;

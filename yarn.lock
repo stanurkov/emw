@@ -2724,6 +2724,10 @@ file-loader@^1.1.11:
     loader-utils "^1.0.2"
     schema-utils "^0.4.5"
 
+file-url@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/file-url/-/file-url-2.0.2.tgz#e951784d79095127d3713029ab063f40818ca2ae"
+
 filename-regex@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
@@ -3693,7 +3697,7 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
-js-base64@^2.1.9:
+js-base64@^2.1.9, js-base64@^2.4.5:
   version "2.4.5"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.4.5.tgz#e293cd3c7c82f070d700fc7a1ca0a2e69f101f92"
 
@@ -5036,6 +5040,20 @@ postcss@^6.0.1:
     chalk "^2.4.1"
     source-map "^0.6.1"
     supports-color "^5.4.0"
+
+preact-dom@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/preact-dom/-/preact-dom-1.0.1.tgz#29ca381ef38badf9fe275fe6211629e8f8867f00"
+  dependencies:
+    preact "^3.4.0"
+
+preact@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-3.4.0.tgz#a52840f9a20d1555b3be7399883ae4b427fd9d2b"
+
+preact@^8.2.9:
+  version "8.2.9"
+  resolved "https://registry.yarnpkg.com/preact/-/preact-8.2.9.tgz#813ba9dd45e5d97c5ea0d6c86d375b3be711cc40"
 
 prepend-http@^1.0.0, prepend-http@^1.0.1:
   version "1.0.4"

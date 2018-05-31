@@ -41,8 +41,8 @@ class Main extends Component {
             activePart: "left",
         };
 
-        console.log("window SIZE: ", window);
-        console.log("SCREEN object: ", screen);
+        // console.log("window SIZE: ", window);
+        // console.log("SCREEN object: ", screen);
 
     }
 
