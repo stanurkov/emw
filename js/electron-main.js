@@ -95,10 +95,11 @@ ipcMain.on("newClient", (event, data) => {
 
     listClients();
 
-    newWindow.on('closed', () => { 
+    newWindow.on('closed', (event) => { 
+        
         clientDirectory.find( ( c, index ) => {
-            if (c.window === newWindow) {
-                clientDirectory.splice(index);
+            if (c.window === event.sender) {
+                clientDirectory.splice(index, 1);
                 listClients();
                 return true;
             }
@@ -106,6 +107,39 @@ ipcMain.on("newClient", (event, data) => {
         } );
     });
 } );
+
+
+ipcMain.on("showClient", (event, clientId) => {
+    clientDirectory.find( c => {
+        if (c.id === clientId) {
+            c.window.show();
+            return true;
+        }
+        return false;
+    } );
+});
+
+ipcMain.on("closeClient", (event, clientId) => {
+    clientDirectory.find( c => {
+        if (c.id === clientId) {
+            c.window.close();
+            return true;
+        }
+        return false;
+    } );
+});
+
+ipcMain.on("tickClient", (event, data) => {
+
+    clientDirectory.find( c => {
+        if (c.id === data.clientId) {
+            c.window.webContents.send("tick", data);
+            return true;
+        }
+        return false;
+    } );
+});
+
 
 
 ipcMain.on("clientUpdate", (event, data) => {

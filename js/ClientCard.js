@@ -1,7 +1,21 @@
 import React, {Component} from 'react';
-import { Paper, Typography } from '@material-ui/core';
-
+import { Paper, Typography, Button } from '@material-ui/core';
+import { green, red, indigo } from "@material-ui/core/colors" 
 import core from './system/core';
+import FlexBand, { FlexBandItem } from 'flexband';
+
+const maxLogLength = 15;
+
+
+const bkColors = [
+    green[100],
+    red[200],
+    "linear-gradient(to bottom right, #E8F5E9, #EF5350)",
+    indigo[100],
+    green[200],
+    indigo[300],
+    "linear-gradient(to bottom right, #E8EAF6, #C5CAE9)",
+];
 
 
 export default class ClientCard extends Component {
@@ -9,7 +23,7 @@ export default class ClientCard extends Component {
         super(props, ...other);
 
         this.state = {
-
+            log: []
         }
         
     }
@@ -29,19 +43,62 @@ export default class ClientCard extends Component {
         if (data && data.clientId === this.props.client) {
             console.log("Client ", data.clientId, " updated: ", data);
 
+            const log = this.state.log;
+
+            log.push(data);
+
+            if (log.length > maxLogLength) {
+                log.splice(0, log.length - maxLogLength);
+                this.setState({ log: log  });
+            }
         }
     }
 
 
     render() {
-        console.log(this.props.client);
+        const client = this.props.client;
 
         return (
 
             <Paper className="margin16 padding16">
                 <Typography variant="title">
-                    { "ID: " + this.props.client }
+                    { "ID: " + client }
                 </Typography>
+
+                <FlexBand>
+                    <FlexBandItem style={{ marginRight: 16 }}>
+                        <Button onClick={ () => {
+                            core.ipc.send("showClient", client)
+                        } } >
+                            Activate
+                        </Button>
+                    </FlexBandItem>
+                    <FlexBandItem style={{ marginRight: 16 }}>
+                        <Button onClick={ () => {
+                            core.ipc.send("closeClient", client)
+                        } } >
+                            Close
+                        </Button>
+                    </FlexBandItem>
+                    <FlexBandItem style={{ marginRight: 16 }}>
+                        <Button onClick={ () => {
+                            core.ipc.send("tickClient", { 
+                                clientId: client,
+                                color: bkColors[ Math.floor( bkColors.length * Math.random() ) ],
+                            })
+                        } } >
+                            Send color
+                        </Button>
+                    </FlexBandItem>
+                </FlexBand>
+                {
+                    this.state.log.map( e => (
+                        <Typography key={e.time + e.event} variant="body1">
+                            { (new Date(e.time)).toLocaleTimeString() + " : " + e.event }
+                        </Typography>
+                    ) )
+
+                }
             </Paper>
         );
     }

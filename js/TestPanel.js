@@ -91,7 +91,7 @@ export default class TestPanel extends Component {
         }
     }
 
-    handleClick = () => {
+    openClient(frame) {
         const clientId = windowIdBase + (nextWindowId ++);
 
         const data = {
@@ -101,8 +101,8 @@ export default class TestPanel extends Component {
                 x: screen.width - 350,
                 y: 50,
                 transparent: true, 
-                // autoHideMenuBar: true,
-                // frame: false,
+                autoHideMenuBar: true,
+                frame: frame,
                 webPreferences: {
                     webSecurity: false,
                 },
@@ -114,14 +114,26 @@ export default class TestPanel extends Component {
         core.ipc.send("newClient", data);
     }
 
+    handleTestOpen = () => {
+        this.openClient(true);
+    }
+
+    handleFramelessOpen = () => {
+        this.openClient(false);
+    }
+
     render() {
 
         return (
             <div className="padding16 layout-min-fill" >
             <Paper className="layout-fill" >
                 <div className="padding16 layout-min-fill" >
-                <Button variant="raised" onClick={this.handleClick} >
+                <Button variant="raised" onClick={this.handleTestOpen} style={{ marginRight: 24}} >
                     Create a test window
+                </Button>
+                
+                <Button variant="raised" onClick={this.handleFramelessOpen}  >
+                    Create a frameless client
                 </Button>
                 </div>    
                 <FlexBand>

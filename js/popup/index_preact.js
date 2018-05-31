@@ -1133,20 +1133,60 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Main = function (_React$Component) {
 	_inherits(Main, _React$Component);
 
-	function Main() {
+	function Main(props) {
+		var _ref;
+
 		_classCallCheck(this, Main);
 
-		return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).apply(this, arguments));
+		for (var _len = arguments.length, other = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+			other[_key - 1] = arguments[_key];
+		}
+
+		var _this = _possibleConstructorReturn(this, (_ref = Main.__proto__ || Object.getPrototypeOf(Main)).call.apply(_ref, [this, props].concat(other)));
+
+		_this.handleTick = function (event, data) {
+			console.log("Ticked! ", data);
+			if (data.color) {
+				_this.setState({ color: data.color });
+			}
+		};
+
+		_this.state = {
+			color: "#FFE0B2"
+		};
+
+		return _this;
 	}
 
 	_createClass(Main, [{
+		key: "componentDidMount",
+		value: function componentDidMount() {
+			this.mount = true;
+			var ipc = electron ? electron.ipcRenderer : null;
+
+			if (ipc) {
+				ipc.on("tick", this.handleTick);
+			}
+		}
+	}, {
+		key: "componentWillUnmount",
+		value: function componentWillUnmount() {
+			this.mount = false;
+			var ipc = electron ? electron.ipcRenderer : null;
+
+			if (ipc) {
+				ipc.removeListener("tick", this.handleTick);
+			}
+		}
+	}, {
 		key: "sendUpdate",
 		value: function sendUpdate(data) {
 			var ipc = electron ? electron.ipcRenderer : null;
 
 			if (ipc) {
 				ipc.send("clientUpdate", _extends({
-					clientId: clientId
+					clientId: clientId,
+					time: new Date().getTime()
 				}, data));
 			}
 		}
@@ -1157,14 +1197,44 @@ var Main = function (_React$Component) {
 
 			var send = this.sendUpdate;
 
+			var buttonName = function buttonName(n) {
+				return n === 0 ? "Left" : n === 2 ? "Right" : n === 1 ? "Middle" : "Button" + n;
+			};
+
 			return _preact2.default.createElement(
 				"div",
-				{ style: { minHeight: "100%" },
-					onClick: function onClick() {
-						send({ event: "Click!" });
+				{ style: { minHeight: "100%", background: this.state.color },
+					onMouseUp: function onMouseUp(data) {
+						send({ event: "MouseUp! (" + buttonName(data.button) + ") " + data.clientX + ":" + data.clientY });
+					},
+					onMouseDown: function onMouseDown(data) {
+						send({ event: "MouseDown! (" + buttonName(data.button) + ") " + data.clientX + ":" + data.clientY });
+					},
+					onMouseMove: function onMouseMove(data) {
+						send({ event: "MouseMove! " + data.clientX + ":" + data.clientY });
 					}
 				},
-				"Client ID is: " + cid
+				"Client ID is: " + cid,
+				_preact2.default.createElement("br", null),
+				"Click or move mouse over",
+				_preact2.default.createElement("br", null),
+				_preact2.default.createElement("br", null),
+				_preact2.default.createElement(
+					"button",
+					{ type: "button", onclick: function onclick() {
+							return send({ event: "Button Click Me!" });
+						} },
+					"Click Me!"
+				),
+				_preact2.default.createElement("br", null),
+				_preact2.default.createElement("br", null),
+				_preact2.default.createElement(
+					"button",
+					{ type: "button", onclick: function onclick() {
+							return send({ event: "Button Test!" });
+						} },
+					"Test!"
+				)
 			);
 		}
 	}]);
