@@ -4,6 +4,7 @@ import ln3 from 'ln3';
 import { Button, Paper, } from '@material-ui/core';
 import { Base64 } from 'js-base64';
 import core from './system/core';
+import ClientCard from './ClientCard';
 
 let nextWindowId = 1; 
 
@@ -17,18 +18,40 @@ const macroDir = "{{DIR}}";
 const baseTemplate = 
 `
 <head>
-<script src="${macroDir}/test.js"></script>
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 100%;
+    height: 100%;
+}
+#app {
+    position: absolute;
+    height: auto;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 8px;
+    margin: 10px;
+    border-radius: 8px;
+    background-color: #FFE0B2;
+}
+</style>
 </head>
-<body>
+<body >
+<div class="container" >
 <div id="app" />
+</div>
 <script>
 var clientId = "${macroId}";
-console.log("client ID:", clientId);
-    var e = document.getElementById("app");
-    if (e) {
-        e.appendChild(document.createTextNode("Hi! My ID is " + clientId));
-    }
+var electron = require("electron");
 </script>
+<script type="text/javascript" src="${macroDir}/index_preact.js"></script>
 </body>`;
 
 
@@ -42,9 +65,34 @@ const uriFor = (id) => {
 
 
 export default class TestPanel extends Component {
+    constructor (props, ...other) {
+        super(props, ...other);
+
+        this.state = {
+            clients: [],
+        }
+    }
+
+    componentDidMount() {
+        this.mount = true;
+        core.ipc.send("getClients");
+        core.ipc.on("clientList", this.handleClientList);
+    }
+
+    componentWillUnmount() {
+        this.moumt = false;
+        core.ipc.removeListener("clientList", this.handleClientList);
+    }
+
+    handleClientList = (event, clients) => {
+        if (this.mount) {
+            console.log("Got client IDs: ", clients);
+            this.setState({ clients: clients });
+        }
+    }
 
     handleClick = () => {
-        console.log("WINDOW: ", window);
+        const clientId = windowIdBase + (nextWindowId ++);
 
         const data = {
             window: {
@@ -52,19 +100,21 @@ export default class TestPanel extends Component {
                 height: 400,
                 x: screen.width - 350,
                 y: 50,
+                transparent: true, 
                 // autoHideMenuBar: true,
                 // frame: false,
                 webPreferences: {
                     webSecurity: false,
-                }
+                },
+                
             },
-            location: uriFor(windowIdBase + (nextWindowId ++)),
+            clientId: clientId,
+            location: uriFor(clientId),
         }
-        core.ipc.send("requestNewWindow", data);
+        core.ipc.send("newClient", data);
     }
 
     render() {
-
 
         return (
             <div className="padding16 layout-min-fill" >
@@ -74,6 +124,14 @@ export default class TestPanel extends Component {
                     Create a test window
                 </Button>
                 </div>    
+                <FlexBand>
+                    { this.state.clients.map( client => (
+                        <ClientCard 
+                            key={ client } 
+                            client={ client } 
+                        />
+                    ) ) }
+                </FlexBand>
             </Paper>
             </div>
         );  

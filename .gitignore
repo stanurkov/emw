@@ -18,6 +18,12 @@
 # VSCode
 /.vscode
 
+# intermediary files
+/js/popup/index.html
+/js/popup/index*.map
+
+/dist
+
 # misc
 .DS_Store
 .env.local

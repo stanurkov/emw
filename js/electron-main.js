@@ -11,6 +11,9 @@ const expressApp = require("express-ws")(expApp)
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow;
 
+const clientDirectory = [];
+
+
 const createWindow = () => {
     mainWindow = new BrowserWindow({width: 1500, height: 900})
 
@@ -58,13 +61,57 @@ switch (os.platform()) {
 
 }
 
-ipcMain.on("requestNewWindow", (event, data) => {
+
+/** 
+ * 
+ * Retrieves a list of IDs of open client windows
+ *  
+ */
+
+const listClients = () => {
+    mainWindow.webContents.send("clientList", 
+        clientDirectory.map( client => client.id ));
+}    
+
+ipcMain.on("getClients", listClients);
+
+
+/**
+ * Opens a new client window and sets it up
+ * 
+ */
+
+ipcMain.on("newClient", (event, data) => {
     const newWindow = new BrowserWindow(
         data.window,
     );
 
     newWindow.loadURL(data.location);
+
+    clientDirectory.push( {
+        id: data.clientId,
+        window: newWindow,
+    } );
+
+    listClients();
+
+    newWindow.on('closed', () => { 
+        clientDirectory.find( ( c, index ) => {
+            if (c.window === newWindow) {
+                clientDirectory.splice(index);
+                listClients();
+                return true;
+            }
+            return false;
+        } );
+    });
 } );
+
+
+ipcMain.on("clientUpdate", (event, data) => {
+    mainWindow.webContents.send("clientUpdate", data);
+});
+
 
 ipcMain.on("testCmd", (event, data) => {
     console.log("TEST COMMAND: ", data);
